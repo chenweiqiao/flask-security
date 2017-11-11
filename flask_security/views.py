@@ -27,7 +27,7 @@ from .utils import url_for_security as url_for
 from .utils import config_value, do_flash, get_message, \
     get_post_login_redirect, get_post_logout_redirect, \
     get_post_register_redirect, get_url, login_user, logout_user, \
-    slash_url_suffix
+    slash_url_suffix, get_post_action_redirect
 
 # Convenient references
 _security = LocalProxy(lambda: current_app.extensions['security'])
@@ -127,6 +127,8 @@ def register():
                 redirect_url = get_post_register_redirect(form.next.data)
             else:
                 redirect_url = get_post_register_redirect()
+            redirect_url = '{}?email={}&type=register'.format(
+                redirect_url, user.email)
 
             return redirect(redirect_url)
         return _render_json(form, include_auth_token=True)
@@ -197,8 +199,9 @@ def send_confirmation():
     if form.validate_on_submit():
         send_confirmation_instructions(form.user)
         if not request.is_json:
-            do_flash(*get_message('CONFIRMATION_REQUEST',
-                     email=form.user.email))
+            return redirect(get_url(_security.post_confirm_view,
+                                    type='confirm', email=form.user.email) or
+                            get_url(_security.login_url))
 
     if request.is_json:
         return _render_json(form)
@@ -240,7 +243,8 @@ def confirm_email(token):
 
     do_flash(*get_message(msg))
 
-    return redirect(get_url(_security.post_confirm_view) or
+    return redirect(get_url(_security.post_confirm_view,
+                            type='confirmed', email=user.email) or
                     get_url(_security.login_url))
 
 
@@ -258,8 +262,9 @@ def forgot_password():
     if form.validate_on_submit():
         send_reset_password_instructions(form.user)
         if not request.is_json:
-            do_flash(*get_message('PASSWORD_RESET_REQUEST',
-                     email=form.user.email))
+            return redirect(get_url(_security.post_reset_view,
+                                    type='reset', email=form.user.email) or
+                            get_url(_security.login_url))
 
     if request.is_json:
         return _render_json(form, include_user=False)

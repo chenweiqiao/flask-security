@@ -27,18 +27,18 @@ from .utils import _, _datastore, config_value, get_message, hash_password, \
 lazy_gettext = make_lazy_gettext(lambda: localize_callback)
 
 _default_field_labels = {
-    'email': _('Email Address'),
-    'password': _('Password'),
-    'remember_me': _('Remember Me'),
-    'login': _('Login'),
-    'register': _('Register'),
-    'send_confirmation': _('Resend Confirmation Instructions'),
-    'recover_password': _('Recover Password'),
-    'reset_password': _('Reset Password'),
-    'retype_password': _('Retype Password'),
-    'new_password': _('New Password'),
-    'change_password': _('Change Password'),
-    'send_login_link': _('Send Login Link')
+    'email': _('邮箱'),
+    'password': _('密码'),
+    'remember_me': _('记住我'),
+    'login': _('登录'),
+    'register': _('注册'),
+    'send_confirmation': _('重发确认邮件'),
+    'recover_password': _('找回密码'),
+    'reset_password': _('重置密码'),
+    'retype_password': _('再输入一遍密码'),
+    'new_password': _('新密码'),
+    'change_password': _('修改密码'),
+    'send_login_link': _('发送登录链接')
 }
 
 
@@ -65,10 +65,10 @@ class Length(ValidatorMixin, validators.Length):
     pass
 
 
-email_required = Required(message='EMAIL_NOT_PROVIDED')
-email_validator = Email(message='INVALID_EMAIL_ADDRESS')
-password_required = Required(message='PASSWORD_NOT_PROVIDED')
-password_length = Length(min=6, max=128, message='PASSWORD_INVALID_LENGTH')
+email_required = Required(message='没有输入邮箱')
+email_validator = Email(message='错误的邮箱地址')
+password_required = Required(message='没有输入密码')
+password_length = Length(min=6, max=128, message='密码长度不对(至少6位)')
 
 
 def get_form_field_label(key):
